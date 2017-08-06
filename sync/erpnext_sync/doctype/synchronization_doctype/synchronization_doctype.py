@@ -17,3 +17,8 @@ class SynchronizationDocType(Document):
         count = frappe.db.sql('''SELECT count(*) FROM `tabSynchronization DocType` WHERE sync_doctype=%s''', self.sync_doctype)
         if count[0][0] >= 1:
             frappe.throw(self.sync_doctype + ' is already exist')
+
+    def on_trash(self):
+        mode = frappe.db.get_value("Synchronization Settings", None, "sync_mode")
+        if mode == 'Slave':
+            frappe.throw('Sync mode is slave. Add/Edit is not allowed')
