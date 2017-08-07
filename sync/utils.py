@@ -15,7 +15,7 @@ def field_exists(field, fields):
     return False
 
 
-def sync_doctype():
+def sync_doctype(doctype_name, date, page):
     master_url = frappe.db.get_value("Synchronization Settings", None, "master_url")
     username = frappe.db.get_value("Synchronization Settings", None, "username")
     password = frappe.db.get_value("Synchronization Settings", None, "password")
@@ -25,21 +25,29 @@ def sync_doctype():
         client = FrappeClient(master_url, username, password)
 
         if client:
-            doc_name = 'tabSynchronization DocType'
-            doctypes = client.get_api("sync.rest.download_data?doc_name=" + doc_name + "&date=2013-01-01&page=1")
+            doc_name = 'tab' + doctype_name
+            doctypes = client.get_api("sync.rest.download_data?doc_name=" + doc_name + "&date=" + str(date) + "&page=" + str(page))
             fields = frappe.db.sql('DESCRIBE `' + doc_name + '`')
             compare_fields(doctypes['fields'], fields)
 
             str_field = ''
+            name_index = 0
+            count = 0
             for field in doctypes['fields']:
                 if not str_field:
                     str_field = str(field[0])
                 else:
                     str_field = str_field + ', ' + str(field[0])
+                if field[0] == 'name':
+                    name_index = count
+                count += 1
 
-            frappe.db.sql('DELETE FROM `' + doc_name + '`')
             for datas in doctypes['data']:
                 str_data = ''
+                exist = frappe.db.sql("SELECT COUNT(*) FROM `" + doc_name + "` WHERE name='" + datas[name_index] + "'")
+                if exist[0][0]:
+                    frappe.db.sql("DELETE FROM `" + doc_name + "` WHERE name='" + datas[name_index] + "'")
+
                 for record in datas:
                     if str(record) == 'None':
                         value = 'NULL'
@@ -52,3 +60,4 @@ def sync_doctype():
 
                 sql_statement = 'INSERT INTO `' + doc_name + '` (' + str_field + ') VALUES (' + str_data + ')'
                 frappe.db.sql(sql_statement)
+

@@ -20,7 +20,8 @@ class SynchronizationSettings(Document):
             except:
                 frappe.throw('Error connecting server')
 
-            sync_doctype()
+            sync_doctype('Synchronization DocType', '1976-01-01', 1)
+
 
 
 

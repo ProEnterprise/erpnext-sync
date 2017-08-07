@@ -89,7 +89,7 @@ scheduler_events = {
     #     "sync.tasks.daily"
     # ],
     "hourly": [
-        "sync.utils.sync_doctype"
+        "sync.tasks.daily"
     ],
     # "weekly": [
     #     "sync.tasks.weekly"
