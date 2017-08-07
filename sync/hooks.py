@@ -81,23 +81,23 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"sync.tasks.all"
-# 	],
-# 	"daily": [
-# 		"sync.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"sync.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"sync.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"sync.tasks.monthly"
-# 	]
-# }
+scheduler_events = {
+    # "all": [
+    #     "sync.tasks.all"
+    # ],
+    # "daily": [
+    #     "sync.tasks.daily"
+    # ],
+    "hourly": [
+        "sync.utils.sync_doctype"
+    ],
+    # "weekly": [
+    #     "sync.tasks.weekly"
+    # ],
+    # "monthly": [
+    #     "sync.tasks.monthly"
+    # ]
+}
 
 # Testing
 # -------
@@ -110,4 +110,3 @@ app_license = "MIT"
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "sync.event.get_events"
 # }
-
