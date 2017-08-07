@@ -14,11 +14,14 @@ class SynchronizationSettings(Document):
         if self.sync_mode == 'Slave':
             if not self.master_url or not self.username or not self.password:
                 frappe.throw('URL, username and password should have a value')
+            client = None
             try:
-                FrappeClient(self.master_url, self.username, self.password)
+                client = FrappeClient(self.master_url, self.username, self.password)
             except:
                 frappe.throw('Error connecting server')
 
+            doctypes = client.get_api("sync.rest.download_data?doc_name=tabSynchronization DocType&date=2013-01-01&page=1")
+            print doctypes
 
 
 
