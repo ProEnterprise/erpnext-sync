@@ -16,11 +16,14 @@ def field_exists(field, fields):
 
 
 def sync_doctype(doctype_name, date, page):
+    # return 1 = successful sync increment batch (more data)
+    # return 0 = did not connect try again next loop
+    # return 2 = successful sync no increment last batch empty
     master_url = frappe.db.get_value("Synchronization Settings", None, "master_url")
     username = frappe.db.get_value("Synchronization Settings", None, "username")
     password = frappe.db.get_value("Synchronization Settings", None, "password")
     sync_mode = frappe.db.get_value("Synchronization Settings", None, "sync_mode")
-
+    ret = 0
     if sync_mode == 'Slave':
         client = FrappeClient(master_url, username, password)
 
@@ -41,7 +44,7 @@ def sync_doctype(doctype_name, date, page):
                 if field[0] == 'name':
                     name_index = count
                 count += 1
-
+            ret = 2
             for datas in doctypes['data']:
                 str_data = ''
                 exist = frappe.db.sql("SELECT COUNT(*) FROM `" + doc_name + "` WHERE name='" + datas[name_index] + "'")
@@ -60,4 +63,9 @@ def sync_doctype(doctype_name, date, page):
 
                 sql_statement = 'INSERT INTO `' + doc_name + '` (' + str_field + ') VALUES (' + str_data + ')'
                 frappe.db.sql(sql_statement)
+                ret = 1
+        else:
+            ret = 0
+    return ret
+
 

@@ -10,7 +10,7 @@ def download_data(doc_name, date, page):
     page = page.replace('/', '')
     start = (int(page) - 1) * record_per_page
     data = frappe.db.sql('SELECT * from `' + doc_name +
-                         '` WHERE creation>=%s and modified>=%s LIMIT ' +
+                         '` WHERE creation>=%s and modified>=%s LIMIT ORDER BY modified' +
                          str(record_per_page) + ' OFFSET ' + str(start), (date, date))
 
     return {"fields": fields, "data": data, "count": count[0][0]}

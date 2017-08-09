@@ -10,6 +10,16 @@ def daily():
         sync_doctype('Synchronization DocType', '1976-01-01', 1)
 
 
+def on_trash(doc, method):
+    trash = frappe.get_doc({
+        "doctype": "Synchronization Trash",
+        "sync_name": doc.name,
+        "sync_date": datetime.datetime.now(),
+        "sync_doctype": doc.doctype
+    })
+    trash.insert(ignore_permissions=True)
+
+
 def sync_download_doctypes():
     doctypes = frappe.db.sql('''SELECT sync_doctype FROM `tabSynchronization DocType` WHERE sync_direction="Download"''')
     for doctype in doctypes:
@@ -18,7 +28,7 @@ def sync_download_doctypes():
             value_date = '1976-01-01'
             last_batch = 0
             sync = frappe.get_doc({
-                "doctype": "tabSynchronization Date",
+                "doctype": "Synchronization Date",
                 "date_last_sync": value_date,
                 "last_batch_sync": 0,
             })
